@@ -14,37 +14,50 @@ RIGHT = 1
 DOWN = 2
 LEFT = 3
 
+GRID_LENGTH = 600
+GRID_HEIGHT = 600
+
+BASIC_UNIT = 10
+
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+
 pygame.init()
-screen = pygame.display.set_mode((600, 600))
+screen = pygame.display.set_mode((GRID_LENGTH, GRID_HEIGHT))
 pygame.display.set_caption('Snake')
 
 snake = [(200, 200), (210, 200), (220, 200)]
-snake_skin = pygame.Surface((10, 10))
-snake_skin.fill((255, 255, 255))
+snake_skin = pygame.Surface((BASIC_UNIT, BASIC_UNIT))
+snake_skin.fill(WHITE)
 
 apple_pos = on_grid_random()
-apple = pygame.Surface((10,10))
-apple.fill((255, 0, 0))
+apple = pygame.Surface((BASIC_UNIT, BASIC_UNIT))
+apple.fill(RED)
 
 my_direction = LEFT
 
 clock = pygame.time.Clock()
 
 while True:
-	clock.tick(30)
+	clock.tick(20)
 	for event in pygame.event.get():
 		if event.type == QUIT:
 			pygame.quit()
 
 		if event.type == KEYDOWN:
 			if event.key == K_UP:
-				my_direction = UP
+				if my_direction != DOWN:
+					my_direction = UP
 			if event.key == K_RIGHT:
-				my_direction = RIGHT
+				if my_direction != LEFT:
+					my_direction = RIGHT
 			if event.key == K_DOWN:
-				my_direction = DOWN
+				if my_direction != UP:
+					my_direction = DOWN
 			if event.key == K_LEFT:
-				my_direction = LEFT
+				if my_direction != RIGHT:
+					my_direction = LEFT
 
 	if collision(snake[0], apple_pos):
 		apple_pos = on_grid_random()
@@ -56,15 +69,36 @@ while True:
 		snake[i] = (snake[i - 1][0], snake[i - 1][1])
 
 	if my_direction == UP:
-		snake[0] = (snake[0][0], snake[0][1] - 10)
+		if snake[0][1] == 0:
+			snake[0] = (snake[0][0], GRID_HEIGHT - BASIC_UNIT)
+		else:
+			snake[0] = (snake[0][0], snake[0][1] - BASIC_UNIT)
 	if my_direction == RIGHT:
-		snake[0] = (snake[0][0] + 10, snake[0][1])
+		if snake[0][0] == (GRID_LENGTH - BASIC_UNIT):
+			snake[0] = (0, snake[0][1])
+		else:
+			snake[0] = (snake[0][0] + BASIC_UNIT, snake[0][1])
 	if my_direction == DOWN:
-		snake[0] = (snake[0][0], snake[0][1] + 10)
+		if snake[0][1] == (GRID_HEIGHT - BASIC_UNIT):
+			snake[0] = (snake[0][0], 0)
+		else:
+			snake[0] = (snake[0][0], snake[0][1] + BASIC_UNIT)
 	if my_direction == LEFT:
-		snake[0] = (snake[0][0] - 10, snake[0][1])
+		if snake[0][0] == 0:
+			snake[0] = (GRID_LENGTH - BASIC_UNIT, snake[0][1])
+		else:
+			snake[0] = (snake[0][0] - BASIC_UNIT, snake[0][1])
 
-	screen.fill((0, 0, 0))
+	# if my_direction == UP:
+	# 	snake[0] = (snake[0][0], snake[0][1] - BASIC_UNIT)
+	# if my_direction == RIGHT:
+	# 	snake[0] = (snake[0][0] + BASIC_UNIT, snake[0][1])
+	# if my_direction == DOWN:
+	# 	snake[0] = (snake[0][0], snake[0][1] + BASIC_UNIT)
+	# if my_direction == LEFT:
+	# 	snake[0] = (snake[0][0] - BASIC_UNIT, snake[0][1])
+
+	screen.fill(BLACK)
 	screen.blit(apple, apple_pos)
 	for pos in snake:
 		screen.blit(snake_skin, pos)
