@@ -40,7 +40,8 @@ my_direction = LEFT
 
 clock = pygame.time.Clock()
 
-mixer.music.load('eat.wav')
+eat_sound = mixer.Sound('eat.wav')
+game_over_sound = mixer.Sound('game_over.wav')
 
 while True:
 	clock.tick(20)
@@ -63,7 +64,7 @@ while True:
 					my_direction = LEFT
 
 	if collision(snake[0], apple_pos):
-		mixer.music.play()
+		eat_sound.play()
 		apple_pos = on_grid_random(GRID_LENGTH, GRID_HEIGHT, BASIC_UNIT)
 		# It doesn't matter which value for the cell is appended here:
 		snake.append((0,0))
@@ -102,6 +103,8 @@ while True:
 	if snake_length >= 5:
 		for i in range(4, snake_length, 1):
 			if collision(snake[0], snake[i]):
+				game_over_sound.play()
+				clock.tick(1)
 				pygame.quit()
 
 	screen.fill(BLACK)
