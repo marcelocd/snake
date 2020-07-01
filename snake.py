@@ -1,10 +1,10 @@
 import pygame, random
 from pygame.locals import *
 
-def on_grid_random():
-	x = random.randint(0, 590)
-	y = random.randint(0, 590)
-	return (x // 10 * 10, y // 10 * 10)
+def on_grid_random(GRID_LENGTH, GRID_HEIGHT, BASIC_UNIT):
+	x = random.randint(0, GRID_LENGTH - BASIC_UNIT)
+	y = random.randint(0, GRID_HEIGHT - BASIC_UNIT)
+	return (x // BASIC_UNIT * BASIC_UNIT, y // BASIC_UNIT * BASIC_UNIT)
 
 def collision(c1, c2):
 	return (c1[0] == c2[0] and c1[1] == c2[1])
@@ -14,8 +14,8 @@ RIGHT = 1
 DOWN = 2
 LEFT = 3
 
-GRID_LENGTH = 600
-GRID_HEIGHT = 600
+GRID_LENGTH = 300
+GRID_HEIGHT = 300
 
 BASIC_UNIT = 10
 
@@ -31,7 +31,7 @@ snake = [(200, 200), (210, 200), (220, 200)]
 snake_skin = pygame.Surface((BASIC_UNIT, BASIC_UNIT))
 snake_skin.fill(WHITE)
 
-apple_pos = on_grid_random()
+apple_pos = on_grid_random(GRID_LENGTH, GRID_HEIGHT, BASIC_UNIT)
 apple = pygame.Surface((BASIC_UNIT, BASIC_UNIT))
 apple.fill(RED)
 
@@ -60,14 +60,18 @@ while True:
 					my_direction = LEFT
 
 	if collision(snake[0], apple_pos):
-		apple_pos = on_grid_random()
-		# It doesn't matter which position I assign here:
+		apple_pos = on_grid_random(GRID_LENGTH, GRID_HEIGHT, BASIC_UNIT)
+		# It doesn't matter which value for the cell is appended here:
 		snake.append((0,0))
 
+	snake_length = len(snake)
+
 	# because of this for, the appended cell will assume the value of the previous one.
-	for i in range(len(snake) - 1, 0, -1):
+	# (This for updates the body)
+	for i in range(snake_length - 1, 0, -1):
 		snake[i] = (snake[i - 1][0], snake[i - 1][1])
 
+	# (These ifs update the head)
 	if my_direction == UP:
 		if snake[0][1] == 0:
 			snake[0] = (snake[0][0], GRID_HEIGHT - BASIC_UNIT)
@@ -89,14 +93,12 @@ while True:
 		else:
 			snake[0] = (snake[0][0] - BASIC_UNIT, snake[0][1])
 
-	# if my_direction == UP:
-	# 	snake[0] = (snake[0][0], snake[0][1] - BASIC_UNIT)
-	# if my_direction == RIGHT:
-	# 	snake[0] = (snake[0][0] + BASIC_UNIT, snake[0][1])
-	# if my_direction == DOWN:
-	# 	snake[0] = (snake[0][0], snake[0][1] + BASIC_UNIT)
-	# if my_direction == LEFT:
-	# 	snake[0] = (snake[0][0] - BASIC_UNIT, snake[0][1])
+	# It's not possible for the snake to collide
+	# with itself if its length is shorter than 5.
+	if snake_length >= 5:
+		for i in range(4, snake_length, 1):
+			if collision(snake[0], snake[i]):
+				pygame.quit()
 
 	screen.fill(BLACK)
 	screen.blit(apple, apple_pos)
