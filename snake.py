@@ -1,5 +1,6 @@
 import pygame, random
 from pygame.locals import *
+from pygame import mixer
 
 def on_grid_random(GRID_LENGTH, GRID_HEIGHT, BASIC_UNIT):
 	x = random.randint(0, GRID_LENGTH - BASIC_UNIT)
@@ -39,6 +40,8 @@ my_direction = LEFT
 
 clock = pygame.time.Clock()
 
+mixer.music.load('eat.wav')
+
 while True:
 	clock.tick(20)
 	for event in pygame.event.get():
@@ -60,6 +63,7 @@ while True:
 					my_direction = LEFT
 
 	if collision(snake[0], apple_pos):
+		mixer.music.play()
 		apple_pos = on_grid_random(GRID_LENGTH, GRID_HEIGHT, BASIC_UNIT)
 		# It doesn't matter which value for the cell is appended here:
 		snake.append((0,0))
