@@ -128,6 +128,7 @@ while True:
 				game_over_sound.play()
 				clock.tick(1)
 				pygame.quit()
+				quit()
 
 
 	screen.blit(grid, grid_pos)
