@@ -10,6 +10,7 @@ def on_grid_random(GRID_LENGTH, GRID_HEIGHT, BASIC_UNIT):
 def collision(c1, c2):
 	return (c1[0] == c2[0] and c1[1] == c2[1])
 
+
 UP = 0
 RIGHT = 1
 DOWN = 2
@@ -17,6 +18,9 @@ LEFT = 3
 
 SCREEN_LENGTH = 500
 SCREEN_HEIGHT = 300
+
+SCORE_BOARD_LENGTH = 200
+SCORE_BOARD_HEIGHT = 300
 
 GRID_LENGTH = 300
 GRID_HEIGHT = 300
@@ -32,8 +36,13 @@ pygame.init()
 screen = pygame.display.set_mode((SCREEN_LENGTH, SCREEN_HEIGHT))
 pygame.display.set_caption('Snake')
 
-score_board = pygame.Surface((SCREEN_LENGTH - GRID_LENGTH, SCREEN_HEIGHT))
+score_board = pygame.Surface((SCORE_BOARD_LENGTH, SCORE_BOARD_HEIGHT))
 score_board.fill(BLUE)
+score_board_pos = (GRID_LENGTH + 1, 0)
+
+grid = pygame.Surface((GRID_LENGTH, GRID_HEIGHT))
+grid.fill(BLACK)
+grid_pos = (0, 0)
 
 snake = [(200, 200), (210, 200), (220, 200)]
 snake_skin = pygame.Surface((BASIC_UNIT, BASIC_UNIT))
@@ -49,6 +58,11 @@ clock = pygame.time.Clock()
 
 eat_sound = mixer.Sound('eat.wav')
 game_over_sound = mixer.Sound('game_over.wav')
+
+score_font = pygame.font.Font('freesansbold.ttf', 25)
+score_pos = (GRID_LENGTH + 10, 10)
+
+score = 0
 
 while True:
 	clock.tick(30)
@@ -75,6 +89,7 @@ while True:
 		apple_pos = on_grid_random(GRID_LENGTH, GRID_HEIGHT, BASIC_UNIT)
 		# It doesn't matter which value for the cell is appended here:
 		snake.append((0,0))
+		score += 1
 
 	snake_length = len(snake)
 
@@ -114,11 +129,14 @@ while True:
 				clock.tick(1)
 				pygame.quit()
 
-	screen.fill(BLACK)
+
+	screen.blit(grid, grid_pos)
 	screen.blit(apple, apple_pos)
 	for pos in snake:
 		screen.blit(snake_skin, pos)
 
-	screen.blit(score_board, (SCREEN_LENGTH + 1, 0))
+	screen.blit(score_board, score_board_pos)
+	score_text = score_font.render('Score: ' + str(score), True, BLACK)
+	screen.blit(score_text, score_pos)
 
 	pygame.display.update()
