@@ -15,6 +15,9 @@ RIGHT = 1
 DOWN = 2
 LEFT = 3
 
+SCREEN_LENGTH = 500
+SCREEN_HEIGHT = 300
+
 GRID_LENGTH = 300
 GRID_HEIGHT = 300
 
@@ -23,10 +26,14 @@ BASIC_UNIT = 10
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
+BLUE = (0, 0, 255)
 
 pygame.init()
-screen = pygame.display.set_mode((GRID_LENGTH, GRID_HEIGHT))
+screen = pygame.display.set_mode((SCREEN_LENGTH, SCREEN_HEIGHT))
 pygame.display.set_caption('Snake')
+
+score_board = pygame.Surface((SCREEN_LENGTH - GRID_LENGTH, SCREEN_HEIGHT))
+score_board.fill(BLUE)
 
 snake = [(200, 200), (210, 200), (220, 200)]
 snake_skin = pygame.Surface((BASIC_UNIT, BASIC_UNIT))
@@ -44,7 +51,7 @@ eat_sound = mixer.Sound('eat.wav')
 game_over_sound = mixer.Sound('game_over.wav')
 
 while True:
-	clock.tick(20)
+	clock.tick(30)
 	for event in pygame.event.get():
 		if event.type == QUIT:
 			pygame.quit()
@@ -111,5 +118,7 @@ while True:
 	screen.blit(apple, apple_pos)
 	for pos in snake:
 		screen.blit(snake_skin, pos)
+
+	screen.blit(score_board, (SCREEN_LENGTH + 1, 0))
 
 	pygame.display.update()
