@@ -1,2 +1,2 @@
 # snake
-The famous snake game
+The good and old Snake Game developed using Pygame.
